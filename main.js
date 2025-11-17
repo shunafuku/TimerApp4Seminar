@@ -1,6 +1,12 @@
 // ベル音を鳴らす関数
 function playBell() {
   const audioCtx = getAudioContext();
+
+  // Safari対応: AudioContextをレジューム
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+
   const osc = audioCtx.createOscillator();
   osc.type = 'sine';
   osc.frequency.value = AUDIO_CONFIG.BASE_FREQUENCY;
