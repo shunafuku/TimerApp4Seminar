@@ -1,10 +1,10 @@
 // ベル音を鳴らす関数
-function playBell() {
+async function playBell() {
   const audioCtx = getAudioContext();
 
   // Safari対応: AudioContextをレジューム
   if (audioCtx.state === 'suspended') {
-    audioCtx.resume();
+    await audioCtx.resume();
   }
 
   const osc = audioCtx.createOscillator();
@@ -33,10 +33,10 @@ function playBell() {
 }
 
 // 複数回ベル音を鳴らす関数（間隔最小化）
-function playBells(count) {
+async function playBells(count) {
   for (let i = 0; i < count; i++) {
-    setTimeout(() => {
-      playBell();
+    setTimeout(async () => {
+      await playBell();
     }, i * AUDIO_CONFIG.BELL_INTERVAL);
   }
 }
