@@ -122,8 +122,14 @@ function tick() {
 }
 
 // Start timer
-function startTimer() {
+async function startTimer() {
   if (!timerState.isRunning) {
+    // iOS対応: ユーザージェスチャー内でAudioContextを初期化・再開
+    const audioCtx = getAudioContext();
+    if (audioCtx.state === 'suspended') {
+      await audioCtx.resume();
+    }
+
     timerState.isRunning = true;
     timerState.intervalId = setInterval(tick, TIMER_CONFIG.TICK_INTERVAL);
     DOM.startBtn.disabled = true;
@@ -135,8 +141,14 @@ function startTimer() {
 }
 
 // Pause timer
-function pauseTimer() {
+async function pauseTimer() {
   if (timerState.isRunning) {
+    // iOS対応: ユーザージェスチャー内でAudioContextを初期化・再開
+    const audioCtx = getAudioContext();
+    if (audioCtx.state === 'suspended') {
+      await audioCtx.resume();
+    }
+
     timerState.isRunning = false;
     clearInterval(timerState.intervalId);
     DOM.startBtn.disabled = false;
@@ -146,7 +158,13 @@ function pauseTimer() {
 }
 
 // Reset timer
-function resetTimer() {
+async function resetTimer() {
+  // iOS対応: ユーザージェスチャー内でAudioContextを初期化・再開
+  const audioCtx = getAudioContext();
+  if (audioCtx.state === 'suspended') {
+    await audioCtx.resume();
+  }
+
   timerState.isRunning = false;
   clearInterval(timerState.intervalId);
   timerState.seconds = 0;
@@ -160,13 +178,25 @@ function resetTimer() {
 }
 
 // Record lap time
-function recordLap() {
+async function recordLap() {
+  // iOS対応: ユーザージェスチャー内でAudioContextを初期化・再開
+  const audioCtx = getAudioContext();
+  if (audioCtx.state === 'suspended') {
+    await audioCtx.resume();
+  }
+
   timerState.laps.unshift(timerState.seconds);
   updateLapDisplay();
 }
 
 // Clear all laps
-function clearLaps() {
+async function clearLaps() {
+  // iOS対応: ユーザージェスチャー内でAudioContextを初期化・再開
+  const audioCtx = getAudioContext();
+  if (audioCtx.state === 'suspended') {
+    await audioCtx.resume();
+  }
+
   timerState.laps = [];
   updateLapDisplay();
 }
@@ -195,13 +225,25 @@ function updateLapDisplay() {
 }
 
 // Toggle lap section visibility
-function toggleLapSection() {
+async function toggleLapSection() {
+  // iOS対応: ユーザージェスチャー内でAudioContextを初期化・再開
+  const audioCtx = getAudioContext();
+  if (audioCtx.state === 'suspended') {
+    await audioCtx.resume();
+  }
+
   lapSectionExpanded = !lapSectionExpanded;
   DOM.lapSection.classList.toggle('expanded', lapSectionExpanded);
 }
 
 // Toggle settings input visibility
-function toggleSettings() {
+async function toggleSettings() {
+  // iOS対応: ユーザージェスチャー内でAudioContextを初期化・再開
+  const audioCtx = getAudioContext();
+  if (audioCtx.state === 'suspended') {
+    await audioCtx.resume();
+  }
+
   settingsVisible = !settingsVisible;
   DOM.settingsInputContent.classList.toggle('hidden', !settingsVisible);
   DOM.toggleIcon.classList.toggle('rotated', !settingsVisible);
@@ -326,7 +368,13 @@ function decreaseWarningCount() {
   }
 }
 
-function modifyWarningCount(delta) {
+async function modifyWarningCount(delta) {
+  // iOS対応: ユーザージェスチャー内でAudioContextを初期化・再開
+  const audioCtx = getAudioContext();
+  if (audioCtx.state === 'suspended') {
+    await audioCtx.resume();
+  }
+
   timerState.warningCount += delta;
 
   if (delta > 0) {
