@@ -42,13 +42,13 @@
 ### パターン例
 
 - 3段階・ベル3回（10分, 15分, 20分で警告）  
-  `https://your-app-url?bell_count=3&w1=600&w2=900&w3=1200`
+  `https://shunafuku.github.io/TimerApp4Seminar?bell_count=3&w1=600&w2=900&w3=1200`
 
 - 5段階・任意時間で警告  
-  `https://your-app-url?bell_count=5&w1=300&w2=600&w3=900&w4=1200&w5=1500`
+  `https://shunafuku.github.io/TimerApp4Seminar?bell_count=5&w1=300&w2=600&w3=900&w4=1200&w5=1500`
 
 - 秒数のみ指定（ベル段階数はデフォルト=3）  
-  `https://your-app-url?w1=720&w2=900&w3=1500`
+  `https://shunafuku.github.io/TimerApp4Seminar?w1=720&w2=900&w3=1500`
 
 > 上記URLをそのまま共有することで、受講者やスタッフ間で同じ設定のタイマーをすぐ利用できます。
 
