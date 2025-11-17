@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=yes"
+    />
+    <title>Timer App</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="main.js"></script>
+    <script>
+      // Constants
+      const AUDIO_CONFIG = {
+        BELL_DURATION: 0.5,
+        BASE_FREQUENCY: 880,
+        HARMONIC_FREQUENCY: 1320,
+        BELL_INTERVAL: 380,
+        BELL_ICON: '🔔',
+      };
+
+      const TIMER_CONFIG = {
+        DEFAULT_WARNING_COUNT: 3,
+        DEFAULT_WARNING_VALUES: [720, 900, 1500],
+        MIN_WARNING_COUNT: 1,
+        MAX_WARNING_COUNT: 10,
+        MAX_SECONDS: 99999999,
+        TICK_INTERVAL: 1000,
+      };
+
+      const DISPLAY_CONFIG = {
+        TIME_UNIT_MINUTE: 'm',
+        TIME_UNIT_SECOND: 's',
+      };
+
+      // State management
+      let timerState = {
+        seconds: 0,
+        isRunning: false,
+        intervalId: null,
+        bellsTriggered: [],
+        laps: [],
+        warningCount: TIMER_CONFIG.DEFAULT_WARNING_COUNT,
+        warningValues: [...TIMER_CONFIG.DEFAULT_WARNING_VALUES],
+      };
+
+      // UI State
+      let lapSectionExpanded = true;
+      let settingsVisible = true;
+
+      // DOM elements
+      const DOM = {};
+
+      // AudioContext (lazy initialization)
+      let audioCtx = null;
+
+      function getAudioContext() {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        return audioCtx;
+      }
+
+      // DOM initialization
+      function initializeDOMElements() {
+        const elementMap = {
+          timerDisplay: 'timer',
+          startBtn: 'startBtn',
+          pauseBtn: 'pauseBtn',
+          resetBtn: 'resetBtn',
+          lapBtn: 'lapBtn',
+          toggleLapBtn: 'toggleLapBtn',
+          lapSection: 'lapSection',
+          clearLapsBtn: 'clearLapsBtn',
+          lapList: 'lapList',
+          settingsDisplayContent: 'settingsDisplayContent',
+          warningInputsContainer: 'warningInputsContainer',
+          increaseCountBtn: 'increaseCountBtn',
+          decreaseCountBtn: 'decreaseCountBtn',
+          currentCountSpan: 'currentCount',
+          toggleSettingsBtn: 'toggleSettingsBtn',
+          settingsInputContent: 'settingsInputContent',
+          toggleIcon: 'toggleIcon',
+          lapEmptyMessage: 'lapEmptyMessage',
+        };
+
+        for (const [key, id] of Object.entries(elementMap)) {
+          const element = document.getElementById(id);
+          if (!element) {
+            console.warn(`DOM element not found: #${id}`);
+          }
+          DOM[key] = element;
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="main-content">
+        <div class="top-layout">
+          <div class="timer-column">
+            <div class="timer-display">
+              <div class="time" id="timer">00:00</div>
+            </div>
+          </div>
+
+          <div class="settings-display-column">
+            <div class="settings-display-section">
+              <div class="settings-display-content" id="settingsDisplayContent">
+                <!-- Dynamically generated warning displays -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button class="btn btn-start" id="startBtn" title="スタート">
+            ▶️
+          </button>
+          <button class="btn btn-pause" id="pauseBtn" disabled title="ポーズ">
+            ⏸️
+          </button>
+          <button class="btn btn-reset" id="resetBtn" title="リセット">
+            🔄
+          </button>
+          <button class="btn btn-lap" id="lapBtn" title="ラップ">
+            <span class="lap-icon">⏱</span>
+            <span class="lap-label">LAP</span>
+          </button>
+          <button
+            class="btn btn-toggle-lap"
+            id="toggleLapBtn"
+            title="ラップ表示切替"
+          >
+            ≡
+          </button>
+        </div>
+
+        <div class="lap-section expanded" id="lapSection">
+          <div class="lap-header">
+            <h2>ラップタイム</h2>
+            <button
+              class="btn-clear-laps"
+              id="clearLapsBtn"
+              data-label="クリア"
+            >
+              クリア
+            </button>
+          </div>
+          <div class="lap-list" id="lapList">
+            <div class="lap-empty" id="lapEmptyMessage">
+              ラップボタンを押すと記録が表示されます
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-input-section">
+          <div class="settings-input-header">
+            <h2>設定</h2>
+            <button class="btn-toggle-settings" id="toggleSettingsBtn">
+              <span id="toggleIcon">▼</span>
+            </button>
+          </div>
+          <div class="settings-input-content" id="settingsInputContent">
+            <div class="warning-count-control">
+              <span class="warning-count-label">ベルを鳴らす回数</span>
+              <div class="warning-count-buttons">
+                <button class="btn-count" id="decreaseCountBtn" title="減らす">
+                  −
+                </button>
+                <span class="current-count" id="currentCount">3</span>
+                <button class="btn-count" id="increaseCountBtn" title="増やす">
+                  +
+                </button>
+              </div>
+            </div>
+            <div id="warningInputsContainer">
+              <!-- Dynamically generated warning inputs -->
+            </div>
+            <style id="warningInputStyles">
+              .warning-input span {
+                color: var(--md3-on-surface-variant);
+                font-size: 12px;
+                white-space: nowrap;
+                flex: 0 0 auto;
+              }
+            </style>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      // Initialize app on load
+      initializeApp();
+    </script>
+  </body>
+</html>
