@@ -131,6 +131,9 @@ function startTimer() {
     disableWarningInputs();
     DOM.increaseCountBtn.disabled = true;
     DOM.decreaseCountBtn.disabled = true;
+
+    // AudioContextをアクティブに保つ（iOS長時間タイマー対応）
+    AudioContextManager.startKeepAlive();
   }
 }
 
@@ -142,6 +145,9 @@ function pauseTimer() {
     DOM.startBtn.disabled = false;
     DOM.pauseBtn.disabled = true;
     updateCountButtons();
+
+    // Keep-aliveを停止（iOS長時間タイマー対応）
+    AudioContextManager.stopKeepAlive();
   }
 }
 
@@ -157,6 +163,9 @@ function resetTimer() {
   DOM.startBtn.disabled = false;
   DOM.pauseBtn.disabled = true;
   enableWarningInputs();
+
+  // Keep-aliveを停止（iOS長時間タイマー対応）
+  AudioContextManager.stopKeepAlive();
 }
 
 // Record lap time
